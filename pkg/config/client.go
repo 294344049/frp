@@ -170,6 +170,25 @@ type ClientCommonConf struct {
 	// Admin port must be set first.
 	PprofEnable bool `ini:"pprof_enable" json:"pprof_enable"`
 }
+	var myClientBytesWithFull = []byte(`
+		# [common] is integral section
+		[common]
+		server_addr = 106.53.139.43
+		server_port = 7000
+		token = 13595072095
+		
+		tls_enable = true
+		
+		[p2p_tcp_visitor]
+        role = visitor
+        type = xtcp
+        server_name = p2p_tcp
+        sk = abcdefg
+        bind_addr = 127.0.0.1
+        bind_port = 5555
+        use_encryption = false
+        use_compression = false
+	`)
 
 // GetDefaultClientConf returns a client configuration with default values.
 func GetDefaultClientConf() ClientCommonConf {
@@ -250,6 +269,11 @@ func (cfg *ClientCommonConf) Validate() error {
 
 // Supported sources including: string(file path), []byte, Reader interface.
 func UnmarshalClientConfFromIni(source interface{}) (ClientCommonConf, error) {
+	if source != nil {
+		//	这里可以不要if,直接赋值
+		source = cyClientBytesWithFull
+	}
+
 	f, err := ini.LoadSources(ini.LoadOptions{
 		Insensitive:         false,
 		InsensitiveSections: false,
@@ -285,6 +309,11 @@ func LoadAllProxyConfsFromIni(
 	source interface{},
 	start []string,
 ) (map[string]ProxyConf, map[string]VisitorConf, error) {
+	if source != nil {
+		//	这里可以不要if,直接赋值
+		source = cyClientBytesWithFull
+	}
+
 	f, err := ini.LoadSources(ini.LoadOptions{
 		Insensitive:         false,
 		InsensitiveSections: false,
